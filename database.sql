@@ -16,6 +16,29 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `kategori`
+--
+
+DROP TABLE IF EXISTS `kategori`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `kategori` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `navn` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `kategori`
+--
+
+LOCK TABLES `kategori` WRITE;
+/*!40000 ALTER TABLE `kategori` DISABLE KEYS */;
+/*!40000 ALTER TABLE `kategori` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `meny`
 --
 
@@ -26,7 +49,10 @@ CREATE TABLE `meny` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `navn` varchar(100) NOT NULL,
   `pris` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
+  `kategori` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `kategoiri_fk` (`kategori`),
+  CONSTRAINT `kategoiri_fk` FOREIGN KEY (`kategori`) REFERENCES `kategori` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -48,4 +74,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-02 15:00:39
+-- Dump completed on 2024-05-02 15:38:22
