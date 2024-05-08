@@ -1,0 +1,66 @@
+* {
+    box-sizing: border-box;
+}
+table {
+    width: 100%;
+    max-width: 1500px;
+    border-collapse: collapse;
+    border: black solid 2px;
+    margin-bottom: 20px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+table p {
+    margin: 5px;
+    width: fit-content;
+}
+
+thead th {
+    background-color: #c5e0b3;
+    padding: 5px;
+    font-weight: bold;
+}
+
+thead tr:first-of-type th p {
+    text-align: center;
+    width: 100%;
+}
+
+tbody td {
+    padding: 10px;
+}
+
+tbody td:nth-of-type(1) {
+    width: 100px;
+}
+
+tbody td:nth-of-type(3) {
+    width: 100px;
+}
+
+tbody td:nth-of-type(4) {
+    width: 150px;
+    padding: 0;
+}
+
+tbody input[type='number'] {
+    margin: 0;
+    height: 50px;
+    border: none;
+}
+
+tr, td, th {
+    border: black solid 2px;
+    height: 50px;
+}
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
+}
