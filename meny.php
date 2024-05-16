@@ -1,5 +1,6 @@
 <?php
-
+use Dompdf\Dompdf;
+require 'vendor/autoload.php';
 function createMenu(mysqli $conn): void
 {
     $categories = $conn->query("SELECT * FROM kategori")->fetch_all(MYSQLI_ASSOC);
@@ -52,8 +53,6 @@ include_once "db_connection.php";
 $conn = GetDbConnection();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    include_once "lib/dompdf/autoload.inc.php";
-
     // Generate html for conversion to pdf
     $html = '<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"><meta http-equiv="X-UA-Compatible" content="ie=edge"><title>Meny</title><style>';
     $html .= file_get_contents("style.css");
@@ -66,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     file_put_contents($file, $html);
 
     // instantiate and use the dompdf class
-    $dompdf = new \Dompdf\Dompdf();
+    $dompdf = new Dompdf();
     $dompdf->loadHtml($html);
     // Setup the paper size and orientation
     $dompdf->setPaper('A4', 'portrait');
