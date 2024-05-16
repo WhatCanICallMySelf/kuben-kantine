@@ -20,7 +20,7 @@ $res = $conn->query($sql);
 $extra_res = $conn->query($sql);
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>Test - Admin</title>
 </head>
