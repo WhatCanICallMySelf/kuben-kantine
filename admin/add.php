@@ -7,5 +7,5 @@ if (isset($_POST["add"])) {
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("sii", $_POST["navn"], $_POST["pris"], $_POST["kategori"]);
     $stmt->execute();
-    header("Location: admin.php");
+    header("Location: index.php");
 }

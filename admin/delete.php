@@ -7,5 +7,5 @@ if (isset($_POST["delete"])) {
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $_POST["id"]);
     $stmt->execute();
-    header("Location: admin.php");
+    header("Location: index.php");
 }
