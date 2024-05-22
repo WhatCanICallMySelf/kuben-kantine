@@ -1,14 +1,15 @@
 <?php
-
 use Dompdf\Dompdf;
-
 require 'vendor/autoload.php';
-function createMenu(mysqli $conn, $input = true): void
+
+function createMenu(mysqli $conn, $input = true, $selectedCategory = null): void
 {
     $categories = $conn->query("SELECT * FROM kategori")->fetch_all(MYSQLI_ASSOC);
     if ($categories) {
         foreach ($categories as $category) {
-            createCategory($conn, $category, $input);
+            if ($selectedCategory === null || $category['id'] == $selectedCategory) {
+                createCategory($conn, $category, $input);
+            }
         }
     } else {
         echo "<h3>Menu is empty</h3>";
@@ -19,31 +20,22 @@ function createCategory(mysqli $conn, array $category, $input): void
 {
     $categoryId = $category["id"];
     $categoryName = $category["navn"];
-
-    $items = $conn->query("SELECT * FROM meny Where kategori = '$categoryId'")->fetch_all(MYSQLI_ASSOC);
+    echo "<table><thead><tr><th colspan='4'>";
+    echo "<p>" . ucwords($categoryName) . "</p></th></tr><tr>";
+    echo "<th><p>Meny nr.</p></th>";
+    echo "<th><p>Meny</p></th>";
+    echo "<th><p>Pris</p></th>";
+    echo "<th><p>Antall</p></th>";
+    echo "</tr></thead><tbody>";
+    $items = $conn->query("SELECT * FROM meny WHERE kategori = '$categoryId'")->fetch_all(MYSQLI_ASSOC);
     if ($items) {
-        $render = false;
         foreach ($items as $item) {
-            if (!empty($_POST[$item["id"]])) {
-                $render = true;
-            }
+            createItem($item, $input);
         }
-        if ($render) {
-            echo "<table><thead><tr><th colspan='4'>";
-            echo "<p>" . ucwords($categoryName) . "</p></th></tr><tr>";
-            echo "<th><p>Meny nr.</p></th>";
-            echo "<th><p>Meny</p></th>";
-            echo "<th><p>Pris</p></th>";
-            echo "<th><p>Antall</p></th>";
-            echo "</tr></thead><tbody>";
-            foreach ($items as $item) {
-                if (!empty($_POST[$item["id"]])) {
-                    createItem($item, $input);
-                }
-            }
-            echo "</tbody></table>";
-        }
+    } else {
+        echo "<tr><td></td><td><p>Kategorien er tom</p></td><td></td><td></td></tr>";
     }
+    echo "</tbody></table>";
 }
 
 function createItem(array $item, $input): void
@@ -59,7 +51,7 @@ function createItem(array $item, $input): void
     if ($input) {
         echo "<td><input name='$itemId' type='number' min='0' value='$value'></td>";
     } else {
-        echo "<td><p>$value</p></td>";
+        echo "<td><p>$input</p></td>";
     }
     echo "</tr>";
 }
@@ -68,35 +60,21 @@ include_once "db_connection.php";
 $conn = GetDbConnection();
 include_once "api/EmailClient.php";
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Generate html for conversion to pdf
-    $html = '<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"><meta http-equiv="X-UA-Compatible" content="ie=edge"><title>Meny</title><style>';
-    $html .= file_get_contents("style.css");
-    $html .= '</style></head><body><main>';
-    ob_start();
-    createMenu($conn, false);
-    $html .= ob_get_clean();
-    $html .= "</main></body></html>";
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['generate_pdf'])) {
     $file = 'test.html';
-    file_put_contents($file, $html);
     $html = file_get_contents($file);
 
-    // instantiate and use the dompdf class
     $dompdf = new Dompdf();
     $dompdf->loadHtml($html);
-    // Setup the paper size and orientation
     $dompdf->setPaper('A4', 'portrait');
-    // Render the HTML as PDF
     $dompdf->render();
-    // Output the generated PDF to Browser
     $dompdf->stream();
-    //$pdf = $dompdf->output();
+    $pdf = $dompdf->output();
     file_put_contents("menu.pdf", $pdf);
-    //sendEmailTest("email", "bruh", $mail);
-    $value = $_POST["email"] ?? "";
-    sendEmail($value, "meny.pdf", $mail);
+    sendEmail("email", "menu.pdf", $mail);
 }
 
+$selectedCategory = $_GET['category'] ?? null;
 ?>
 <!doctype html>
 <html lang="en">
@@ -107,16 +85,51 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="style.css">
     <title>Meny</title>
+
 </head>
 <body>
 <main>
-    <form method='post' action="">
+    <div class="center">
+        <div class="oppskrift_kategorier">
+            <div class="space_between">
+                <?php
+                $kategoriQuery = "SELECT * FROM kategori";
+                $categories = $conn->query($kategoriQuery)->fetch_all(MYSQLI_ASSOC);
+
+                if (empty($categories)) {
+                    echo "<p>Fant ikke noen kategorier</p>";
+                } else {
+                    echo "<div class='matkategori' data-kategori-id='alle' onclick='filterCategory(null)'>Alle kategorier</div>";
+                    foreach ($categories as $kategori) {
+                        $kategori_id = $kategori['id'];
+                        $kategori_navn = $kategori['navn'];
+                        $selectedClass = ($selectedCategory == $kategori_id) ? 'selected' : '';
+                        echo "<div class='matkategori $selectedClass' data-kategori-id='$kategori_id' onclick='filterCategory($kategori_id)'>$kategori_navn</div>";
+                    }
+                }
+                ?>
+            </div>
+        </div>
+    </div>
+
+    <form method='post'>
         <?php
-        $value = $_POST["email"] ?? "";
-        echo '<input type="email" name="email" value="' . $value . '">';
-        createMenu($conn); ?>
-        <button type='submit'>Submit</button>
+        createMenu($conn, true, $selectedCategory);
+        ?>
+        <button type='submit' name='generate_pdf'>Submit</button>
     </form>
 </main>
+
+<script>
+    function filterCategory(categoryId) {
+        let url = new URL(window.location.href);
+        if (categoryId) {
+            url.searchParams.set('category', categoryId);
+        } else {
+            url.searchParams.delete('category');
+        }
+        window.location.href = url.toString();
+    }
+</script>
 </body>
 </html>
