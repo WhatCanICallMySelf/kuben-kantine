@@ -1,4 +1,4 @@
-
+<?php
 //Credit til gabriel for å lage
 
 //Import PHPMailer classes into the global namespace
@@ -16,7 +16,7 @@ require $_SERVER["DOCUMENT_ROOT"] . "/env.php";
 //Create an instance; passing `true` enables exceptions
 $mail = new PHPMailer(true);
 //Server settings
-$APP_DEBUG = true;
+$APP_DEBUG = false;
 if ($APP_DEBUG) {
     $mail->SMTPDebug = SMTP::DEBUG_SERVER;  //Enable verbose debug output
 }
