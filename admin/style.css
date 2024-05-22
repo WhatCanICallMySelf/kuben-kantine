@@ -1,0 +1,26 @@
+body{
+    display: flex;
+    flex-flow: wrap row;
+    align-items: flex-start;
+}
+
+.operation{
+    display: flex;
+    flex-flow: column wrap;
+    border: 2px solid #bbb;
+    border-radius: 40px;
+}
+
+input, .operation, select, button, table{
+    margin: 10px;
+    padding: 10px;
+}
+
+table{
+    border-collapse: collapse;
+    border: 1px solid #555;
+}
+
+th, td{
+    padding: 3px;
+}

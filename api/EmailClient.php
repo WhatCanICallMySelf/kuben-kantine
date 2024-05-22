@@ -1,4 +1,3 @@
-<?php
 
 //Credit til gabriel for å lage
 

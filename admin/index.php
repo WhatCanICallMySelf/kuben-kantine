@@ -23,10 +23,12 @@ $extra_res = $conn->query($sql);
 <html lang="en">
 <head>
     <title>Test - Admin</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-<h2>Legg til</h2>
-<form method="post" action="add.php">
+
+<form method="post" action="add.php" class="operation">
+    <h2>Legg til</h2>
     <label for="navn">Navn:</label>
     <input type="text" name="navn" id="navn" placeholder="Navn" required>
     <label for="pris">Pris:</label>
@@ -45,8 +47,10 @@ $extra_res = $conn->query($sql);
 <?php
 if ($main_result->num_rows > 0) {
     ?>
-    <h3>Meny</h3>
     <table>
+        <tr>
+            <th colspan="6">Meny</th>
+        </tr>
         <tr>
             <th>ID</th>
             <th>Navn</th>
@@ -78,8 +82,10 @@ if ($main_result->num_rows > 0) {
 
 if ($extra_res->num_rows > 0) {
     ?>
-    <h3>Kategori</h3>
     <table>
+        <tr>
+            <th colspan="2">Kategori</th>
+        </tr>
         <tr>
             <th>ID</th>
             <th>Navn</th>
@@ -98,7 +104,7 @@ if ($extra_res->num_rows > 0) {
 }
 
 if (isset($_POST["prep"]) and isset($select_res)) {
-    echo "<form action='update.php' method='post'>";
+    echo "<form action='update.php' method='post' class='operation'>";
     foreach ($select_res as $column => $element) {
         if ($column === "kategori") {
             echo "<select name='kategori'>";
