@@ -28,7 +28,7 @@ $extra_res = $conn->query($sql);
 <body>
 
 <form method="post" action="add.php" class="operation">
-    <h2>Legg til</h2>
+    <h3>Legg til</h3>
     <label for="navn">Navn:</label>
     <input type="text" name="navn" id="navn" placeholder="Navn" required>
     <label for="pris">Pris:</label>
@@ -114,7 +114,7 @@ if (isset($_POST["prep"]) and isset($select_res)) {
             echo "</select>";
         } elseif ($column === "id") {
             echo "<input type='hidden' name='id' value='$element'>";
-            echo "<p>id: $element</p>";
+            echo "<h4>ID: $element</h4>";
         } else {
             echo "<textarea name='$column'>$element</textarea>";
         }

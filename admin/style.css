@@ -1,4 +1,5 @@
 body{
+    font-family: Arial, sans-serif;
     display: flex;
     flex-flow: wrap row;
     align-items: flex-start;
@@ -16,11 +17,20 @@ input, .operation, select, button, table{
     padding: 10px;
 }
 
-table{
+textarea, label{
+    margin: 10px;
+}
+
+table, tr{
     border-collapse: collapse;
     border: 1px solid #555;
 }
 
 th, td{
-    padding: 3px;
+    padding: 5px 10px;
+    text-align: center;
+}
+
+h3, h4{
+    text-align: center;
 }
