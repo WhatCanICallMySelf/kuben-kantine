@@ -22,10 +22,13 @@ function createCategory(mysqli $conn, array $category, $input): void
 
     $items = $conn->query("SELECT * FROM meny Where kategori = '$categoryId'")->fetch_all(MYSQLI_ASSOC);
     if ($items) {
-        $render = false;
-        foreach ($items as $item) {
-            if (!empty($_POST[$item["id"]])) {
-                $render = true;
+        $render = true;
+        if (!$input) {
+            $render = false;
+            foreach ($items as $item) {
+                if (!empty($_POST[$item["id"]])) {
+                    $render = true;
+                }
             }
         }
         if ($render) {
@@ -36,11 +39,15 @@ function createCategory(mysqli $conn, array $category, $input): void
             echo "<th><p>Pris</p></th>";
             echo "<th><p>Antall</p></th>";
             echo "</tr></thead><tbody>";
-            foreach ($items as $item) {
-                if (!empty($_POST[$item["id"]])) {
-                    createItem($item, $input);
+                foreach ($items as $item) {
+                    if (!$input) {
+                        if (!empty($_POST[$item["id"]])) {
+                            createItem($item, $input);
+                        }
+                    } else {
+                        createItem($item, $input);
+                    }
                 }
-            }
             echo "</tbody></table>";
         }
     }
@@ -88,13 +95,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $dompdf->setPaper('A4', 'portrait');
     // Render the HTML as PDF
     $dompdf->render();
-    // Output the generated PDF to Browser
-    $dompdf->stream();
-    //$pdf = $dompdf->output();
+    $pdf = $dompdf->output();
     file_put_contents("menu.pdf", $pdf);
-    //sendEmailTest("email", "bruh", $mail);
-    $value = $_POST["email"] ?? "";
-    sendEmail($value, "meny.pdf", $mail);
+    $email = $_POST["email"] ?? "";
+    sendPDFEmail($email, "menu.pdf", $mail);
+    sendPDFEmail($kantine_email, "menu.pdf", $mail);
 }
 
 ?>
