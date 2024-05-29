@@ -84,9 +84,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     createMenu($conn, false);
     $html .= ob_get_clean();
     $html .= "</main></body></html>";
-    $file = 'test.html';
-    file_put_contents($file, $html);
-    $html = file_get_contents($file);
 
     // instantiate and use the dompdf class
     $dompdf = new Dompdf();
