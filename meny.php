@@ -71,7 +71,7 @@ function createItem(array $item, $input): void
     echo "</tr>";
 }
 
-include_once "db_connection.php";
+include_once "utils/db_connection.php";
 $conn = GetDbConnection();
 include_once "utils/EmailClient.php";
 
