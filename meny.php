@@ -73,7 +73,7 @@ function createItem(array $item, $input): void
 
 include_once "db_connection.php";
 $conn = GetDbConnection();
-include_once "api/EmailClient.php";
+include_once "utils/EmailClient.php";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Generate html for conversion to pdf
