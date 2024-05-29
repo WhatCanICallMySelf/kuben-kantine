@@ -1,8 +1,11 @@
 <?php
+include_once "env.php";
 include_once "utils/auth.php";
 if (!empty($_POST["oneTimeCode"])) {
     if ($_POST["oneTimeCode"] === $_SESSION["oneTimeCode"]) {
-        login();
+        if ($_POST["oneTimeCodeTime"] - time() < $oneTimeCodeTimeLimit) {
+            login();
+        }
     } else {
         session_unset();
     }
@@ -17,6 +20,7 @@ if (!empty($_POST["email"])) {
     $emailSubject = "Kuben kantine engangskode";
     sendEmail($email, $emailContent, $emailSubject, $mail);
     $_SESSION["oneTimeCode"] = $oneTimeCode;
+    $_SESSION["oneTimeCodeTime"] = time();
 }
 if (isLoggedIn()) {
     header("Location: /meny.php");

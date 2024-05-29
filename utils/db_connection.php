@@ -1,7 +1,7 @@
 <?php
 function GetDbConnection(): false|mysqli
 {
-    include_once "env.php";
+    include_once $_SERVER["DOCUMENT_ROOT"] ."/env.php";
     try {
         return mysqli_connect($hostname, $user, $password, $db);
     } catch (mysqli_sql_exception $exception) {

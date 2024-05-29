@@ -1,5 +1,7 @@
 <?php
-require_once "../db_connection.php";
+require_once $_SERVER["DOCUMENT_ROOT"] . "/utils/auth.php";
+authRedirect();
+require_once $_SERVER["DOCUMENT_ROOT"] . "/utils/db_connection.php";
 $conn = GetDbConnection();
 
 if (isset($_POST["update"])) {

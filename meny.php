@@ -3,6 +3,8 @@
 use Dompdf\Dompdf;
 
 require 'vendor/autoload.php';
+require_once "utils/auth.php";
+authRedirect();
 function createMenu(mysqli $conn, $input = true): void
 {
     $categories = $conn->query("SELECT * FROM kategori")->fetch_all(MYSQLI_ASSOC);
