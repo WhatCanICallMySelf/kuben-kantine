@@ -12,6 +12,11 @@ function authRedirect()
     }
 }
 
+function login()
+{
+    unset($_SESSION["oneTimeCode"]);
+    $_SESSION["loggedIn"] = true;
+}
 // Session structure {
 //  loggedIn: bool
 //  token: int

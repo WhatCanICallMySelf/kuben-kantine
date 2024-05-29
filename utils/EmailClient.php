@@ -39,11 +39,11 @@ function sendPDFEmail($receiver, $pdf, PHPMailer $mail): bool
 
 }
 
-function sendEmail($receiver, $content, PHPMailer $mail): bool
+function sendEmail($receiver, $content,$subject, PHPMailer $mail): bool
 {
     try {
         $mail->addAddress($receiver);
-        $mail->Subject = "Meny bestilling";
+        $mail->Subject = $subject;
         $mail->Body = $content;
         $mail->send();
         return true;
