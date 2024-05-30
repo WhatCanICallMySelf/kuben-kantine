@@ -1,19 +1,40 @@
 <?php
 session_start();
-function isLoggedIn()
+function isLoggedIn(): bool
 {
     return isset($_SESSION["loggedIn"]);
 }
 
-function authRedirect()
+function authRedirect(): void
 {
     if (!isset($_SESSION["loggedIn"])) {
         header("Location: /");
     }
 }
 
-function login()
+function login($oneTimeCode): void
 {
-    unset($_SESSION["oneTimeCode"]);
-    $_SESSION["loggedIn"] = true;
+    require $_SERVER["DOCUMENT_ROOT"] . "/env.php";
+    if ($oneTimeCode === $_SESSION["oneTimeCode"]) {
+        if ($oneTimeCode - time() < $oneTimeCodeTimeLimit) {
+            unset($_SESSION["oneTimeCode"]);
+            unset($_SESSION["oneTimeCodeTime"]);
+            $_SESSION["loggedIn"] = true;
+        }
+    } else {
+        session_unset();
+    }
+}
+
+function verifyEmail($email): bool
+{
+    return true;
+}
+
+function generateOneTimeCode(): string
+{
+    $oneTimeCode = strval(random_int(100000, 999999));
+    $_SESSION["oneTimeCode"] = $oneTimeCode;
+    $_SESSION["oneTimeCodeTime"] = time();
+    return $oneTimeCode;
 }

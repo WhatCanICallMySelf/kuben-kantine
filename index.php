@@ -1,26 +1,21 @@
 <?php
-include_once "env.php";
 include_once "utils/auth.php";
+
 if (!empty($_POST["oneTimeCode"])) {
-    if ($_POST["oneTimeCode"] === $_SESSION["oneTimeCode"]) {
-        if ($_POST["oneTimeCodeTime"] - time() < $oneTimeCodeTimeLimit) {
-            login();
-        }
-    } else {
-        session_unset();
-    }
+    login($_POST["oneTimeCode"]);
 }
 if (!empty($_POST["email"])) {
     $email = $_POST["email"];
-    // todo verify email
-
-    include_once "utils/EmailClient.php";
-    $oneTimeCode = strval(random_int(100000, 999999));
-    $emailContent = "Din engangskode er " . $oneTimeCode;
-    $emailSubject = "Kuben kantine engangskode";
-    sendEmail($email, $emailContent, $emailSubject, $mail);
-    $_SESSION["oneTimeCode"] = $oneTimeCode;
-    $_SESSION["oneTimeCodeTime"] = time();
+    // todo verify email propperly
+    if (verifyEmail($email)) {
+        include_once "utils/EmailClient.php";
+        $oneTimeCode = generateOneTimeCode();
+        $emailContent = "Din engangskode er " . $oneTimeCode;
+        $emailSubject = "Kuben kantine engangskode";
+        sendEmail($email, $emailContent, $emailSubject, $mail);
+    } else {
+        $error = "Ugyldig epost";
+    }
 }
 if (isLoggedIn()) {
     header("Location: /meny.php");
@@ -43,7 +38,8 @@ if (isLoggedIn()) {
         <label for="oneTimeCode">Engangskode</label>
         <input type="number" min="100000" max="999999" name="oneTimeCode" id="oneTimeCode">
         <button type="submit">Login</button>
-    <?php } else { ?>
+    <?php } else {
+        echo "<p>$error</p>"?>
         <label for="email">Epost</label>
         <input type="email" name="email" id="email">
         <button type="submit">Send engangskode</button>
