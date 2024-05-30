@@ -7,7 +7,7 @@ function isLoggedIn(): bool
 
 function authRedirect(): void
 {
-    if (!isset($_SESSION["loggedIn"])) {
+    if (!isLoggedIn()) {
         header("Location: /");
     }
 }
@@ -28,6 +28,7 @@ function login($oneTimeCode): void
 
 function verifyEmail($email): bool
 {
+    $_SESSION["email"] = $email;
     return true;
 }
 

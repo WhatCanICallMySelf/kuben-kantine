@@ -39,7 +39,7 @@ if (isLoggedIn()) {
         <input type="number" min="100000" max="999999" name="oneTimeCode" id="oneTimeCode">
         <button type="submit">Login</button>
     <?php } else {
-        echo "<p>$error</p>"?>
+        echo !empty($error) ? "<p>$error</p>" : "" ?>
         <label for="email">Epost</label>
         <input type="email" name="email" id="email">
         <button type="submit">Send engangskode</button>

@@ -41,15 +41,15 @@ function createCategory(mysqli $conn, array $category, $input): void
             echo "<th><p>Pris</p></th>";
             echo "<th><p>Antall</p></th>";
             echo "</tr></thead><tbody>";
-                foreach ($items as $item) {
-                    if (!$input) {
-                        if (!empty($_POST[$item["id"]])) {
-                            createItem($item, $input);
-                        }
-                    } else {
+            foreach ($items as $item) {
+                if (!$input) {
+                    if (!empty($_POST[$item["id"]])) {
                         createItem($item, $input);
                     }
+                } else {
+                    createItem($item, $input);
                 }
+            }
             echo "</tbody></table>";
         }
     }
@@ -96,9 +96,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $dompdf->render();
     $pdf = $dompdf->output();
     file_put_contents("menu.pdf", $pdf);
-    $email = $_POST["email"] ?? "";
-    sendPDFEmail($email, "menu.pdf", $mail);
+    $email = $_SESSION["email"];
     sendPDFEmail($kantine_email, "menu.pdf", $mail);
+    sendPDFEmail($email, "menu.pdf", $mail);
 }
 
 ?>
@@ -115,10 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
 <main>
     <form method='post' action="">
-        <?php
-        $value = $_POST["email"] ?? "";
-        echo '<input type="email" name="email" value="' . $value . '">';
-        createMenu($conn); ?>
+        <?php createMenu($conn); ?>
         <button type='submit'>Submit</button>
     </form>
 </main>
