@@ -9,6 +9,20 @@ function createMenu(mysqli $conn, $input = true): void
 {
     $categories = $conn->query("SELECT * FROM kategori")->fetch_all(MYSQLI_ASSOC);
     if ($categories) {
+        echo "<h1>MENY FOR KUBENKANTINA</h1>";
+        echo "<p>Fyll ut din bestilling og trykk bestill på bunnen av siden</p>";
+        echo "<p>For at vi skal klare å levere bestilt mat og drikke, trenger vi litt tid på å få dette inn i logistikken vår. Bestilling må derfor skje senest kl 12.00 dagen før. Dersom bestillingen er uklar, tar vi kontakt med deg. Ved store bestillinger, over 50 personer, må du henvende deg direkte til kjøkkenet for egen avtale. All mat/drikke må hentes på kjøkkenet, hvis annet ikke er avtalt. Dersom du bare skal ha med deg gjester i personalkantina, registrerer du kun antall. Ved spørsmål eller endringer i etterkant, ta kontakt med kantineleder Jens, mob: 40 38 28 39 eller jens.anderberg@osloskolen.no</p>";
+        generateLabelAndInput("dato", "date", $input, true);
+        generateLabelAndInput("tidspunkt", "text", $input, true);
+        echo "<p>Vi ønsker å spise buffet i personalkantina. Skriv inn antall i boksen:</p>";
+        generateLabelAndInput("antall", "number", $input, false);
+        echo "<p>I tillegg til buffeten ønsker vi kake (kryss av)</p>";
+        $checked = isset($_POST["kake"]) ? "checked" : "";
+        echo "<input name='kake' id='kake' type='checkbox' value='1' $checked>";
+        echo "<p>Hvilket kostnadssted skal belastes?</p>";
+        echo "<p>todo ooops?</p>";
+        generateLabelAndInput("navn", "string", $input, true);
+        generateLabelAndInput("telefonnr", "string", $input, true);
         foreach ($categories as $category) {
             createCategory($conn, $category, $input);
         }
@@ -73,6 +87,19 @@ function createItem(array $item, $input): void
     echo "</tr>";
 }
 
+function generateLabelAndInput($name, $type, $input, $required): void
+{
+    $value = $_POST[$name] ?? "";
+    if ($input) {
+        $required = $required ? "required" : "";
+        echo "<label for='$name'>" . ucwords($name) . "</label>";
+        echo "<input name='$name' id='$name' type='$type' value='$value' $required>";
+    } else {
+        echo "<p>" . ucwords($name) . ": $value</p>";
+    }
+    echo "<br>";
+}
+
 include_once "utils/db_connection.php";
 $conn = GetDbConnection();
 include_once "utils/EmailClient.php";
@@ -94,11 +121,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $dompdf->setPaper('A4', 'portrait');
     // Render the HTML as PDF
     $dompdf->render();
+    $dompdf->stream();
     $pdf = $dompdf->output();
     file_put_contents("menu.pdf", $pdf);
     $email = $_SESSION["email"];
-    sendPDFEmail($kantine_email, "menu.pdf", $mail);
-    sendPDFEmail($email, "menu.pdf", $mail);
+    //sendPDFEmail($kantine_email, "menu.pdf", $mail);
+    //sendPDFEmail($email, "menu.pdf", $mail);
 }
 
 ?>
@@ -116,7 +144,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <main>
     <form method='post' action="">
         <?php createMenu($conn); ?>
-        <button type='submit'>Submit</button>
+        <br>
+        <button type='submit'>Bestill</button>
     </form>
 </main>
 </body>
